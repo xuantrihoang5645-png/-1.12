@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方法说明｜全国生活决策地图</title>
+  <meta name="description" content="查看这个生活决策网站的来源、覆盖、指标定义与局限边界。" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <script src="./js/recommendation.js" charset="utf-8" defer></script>
+  <script src="./js/about.js" charset="utf-8" defer></script>
+</head>
+<body>
+  <div class="page-shell narrow-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="返回首页">
+        <span class="brand-badge">CN</span>
+        <div>
+          <strong>全国生活决策地图</strong>
+          <small>方法说明与诚实披露</small>
+        </div>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="展开导航" aria-expanded="false">菜单</button>
+      <nav class="topnav" data-nav>
+        <a href="./index.html">首页</a>
+        <a href="#method">方法</a>
+        <a href="#coverage">覆盖</a>
+        <a href="#sources">来源</a>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <div id="about-banner" class="status-banner status-banner-hidden" role="status"></div>
+
+      <section class="card hero-card hero-simple">
+        <div class="hero-main">
+          <p class="eyebrow">项目定位</p>
+          <h1>把结论背后的证据链说清楚</h1>
+          <p class="hero-subtitle">这个站点优先展示事实层，其次才是快照、体验信号和智能解读。任何推理都不会被包装成事实。</p>
+        </div>
+        <aside class="hero-side">
+          <div class="mini-stat"><span>省 / 市 / 县</span><strong id="about-entity-count">—</strong></div>
+          <div class="mini-stat"><span>来源条目</span><strong id="about-source-count">—</strong></div>
+          <div class="mini-stat"><span>城市事实层</span><strong id="about-fact-count">—</strong></div>
+          <div class="mini-stat"><span>生成时间</span><strong id="about-generated-at">—</strong></div>
+          <p id="about-coverage-note" class="hero-note">加载中…</p>
+        </aside>
+      </section>
+
+      <section id="method" class="secondary-grid">
+        <article class="card">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">方法说明</p>
+              <h2>数据如何进入这个站</h2>
+            </div>
+          </div>
+          <ul id="about-method-list" class="bullet-list"></ul>
+        </article>
+        <article class="card">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">边界说明</p>
+              <h2>哪些地方不能下强结论</h2>
+            </div>
+          </div>
+          <ul id="about-limit-list" class="bullet-list"></ul>
+        </article>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">指标定义</p>
+            <h2>每个核心指标如何理解</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>指标 ID</th>
+                <th>指标名称</th>
+                <th>作用范围</th>
+                <th>可比范围</th>
+                <th>代理值</th>
+                <th>可排名</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody id="about-metric-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="coverage" class="card">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">当前站内覆盖</p>
+            <h2>覆盖度与缺失维度</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>省份</th>
+                <th>地级市目录</th>
+                <th>地级市事实层</th>
+                <th>地级市可解读</th>
+                <th>县区目录</th>
+                <th>县区可解读</th>
+                <th>缺失维度</th>
+              </tr>
+            </thead>
+            <tbody id="about-coverage-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sources" class="card">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">数据研究摘要</p>
+            <h2>哪些来源适合首版，哪些只能补充解释</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>数据源名称</th>
+                <th>来源类型</th>
+                <th>可提供字段</th>
+                <th>覆盖范围</th>
+                <th>更新频率</th>
+                <th>适合首版</th>
+                <th>适合静态站点</th>
+                <th>适合横向比较</th>
+                <th>局限性</th>
+              </tr>
+            </thead>
+            <tbody id="about-research-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header compact">
+          <div>
+            <p class="section-kicker">可下载数据资产</p>
+            <h2>前台与离线构建现在用到的核心文件</h2>
+          </div>
+        </div>
+        <div id="about-assets" class="asset-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>方法说明页只解释口径，不替代你对租房、工作、学区、片区和通勤线路的进一步核查。</p>
+      <a href="./index.html">返回首页</a>
+    </footer>
+  </div>
+</body>
+</html>

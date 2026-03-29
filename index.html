@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全国生活决策地图</title>
+  <meta name="description" content="一个以真实数据为底座、用智能解读辅助决策的全国生活与宜居比较平台。" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <script src="./assets/vendor/echarts.min.js" charset="utf-8" defer></script>
+  <script src="./assets/vendor/china.js" charset="utf-8" defer></script>
+  <script src="./js/recommendation.js" charset="utf-8" defer></script>
+  <script src="./js/charts.js" charset="utf-8" defer></script>
+  <script src="./js/app.js" charset="utf-8" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="返回首页">
+        <span class="brand-badge">CN</span>
+        <div>
+          <strong>全国生活决策地图</strong>
+          <small>事实优先 · 证据清晰 · 智能解读</small>
+        </div>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="展开导航" aria-expanded="false">菜单</button>
+      <nav class="topnav" data-nav>
+        <a href="#overview">总览</a>
+        <a href="#compare">对比</a>
+        <a href="#interpretation">智能解读</a>
+        <a href="#coverage">覆盖</a>
+        <a href="./about.html">方法说明</a>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <div id="global-banner" class="status-banner status-banner-hidden" role="status"></div>
+
+      <section class="card hero-card">
+        <div class="hero-main">
+          <div>
+            <p class="eyebrow">数据仪表盘头部</p>
+            <h1>先看证据，再看结论</h1>
+            <p class="hero-subtitle">这里不是黑盒推荐页，而是把真实数据、快照限制和智能解读分开展示的全国生活决策工具。</p>
+            <p id="hero-title-meta" class="hero-meta-text">加载中…</p>
+          </div>
+          <div class="search-row">
+            <input id="global-search" type="search" placeholder="搜索省 / 地级市 / 县区，例如：湖北、杭州、东城区" />
+            <button id="global-search-button" class="btn btn-primary" type="button">搜索定位</button>
+            <button id="export-scope" class="btn btn-secondary" type="button">导出当前范围</button>
+          </div>
+          <p id="search-feedback" class="helper-text">支持搜索全国省、市、县区目录；系统会自动切换到对应层级并打开证据详情。</p>
+          <div class="toolbar-stack">
+            <div class="segmented-control">
+              <button class="toggle-btn is-active" type="button" data-admin-level="province">省级</button>
+              <button class="toggle-btn" type="button" data-admin-level="city">地级市</button>
+              <button class="toggle-btn" type="button" data-admin-level="county">县区</button>
+            </div>
+            <div class="segmented-control">
+              <button class="toggle-btn is-active" type="button" data-data-lens="fact">事实优先</button>
+              <button class="toggle-btn" type="button" data-data-lens="mixed">混合理解</button>
+              <button class="toggle-btn" type="button" data-data-lens="inference">推理解读</button>
+            </div>
+            <div class="segmented-control">
+              <button class="toggle-btn is-active" type="button" data-period-mode="latest">最新快照</button>
+              <button class="toggle-btn" type="button" data-period-mode="alignedAnnual">统一年度</button>
+            </div>
+          </div>
+        </div>
+        <aside class="hero-side">
+          <div class="mini-stat"><span>省级记录</span><strong id="hero-province-count">0</strong></div>
+          <div class="mini-stat"><span>城市记录</span><strong id="hero-city-count">0</strong></div>
+          <div class="mini-stat"><span>县区目录</span><strong id="hero-county-count">0</strong></div>
+          <div class="mini-stat"><span>城市事实层</span><strong id="hero-fact-count">0</strong></div>
+          <div class="hero-pills">
+            <span id="hero-evidence-pill" class="pill">加载中</span>
+            <span id="hero-update-pill" class="pill pill-muted">加载中</span>
+            <span id="hero-scope-note" class="pill pill-muted">加载中</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="kpi-grid">
+        <article class="card kpi-card"><span class="kpi-label">当前对象数</span><strong id="kpi-current-count">0</strong><small id="kpi-current-note">加载中</small></article>
+        <article class="card kpi-card"><span class="kpi-label">事实样本优先看</span><strong id="kpi-fact-leader">—</strong><small id="kpi-fact-note">加载中</small></article>
+        <article class="card kpi-card"><span class="kpi-label">值得继续研究</span><strong id="kpi-watchlist">—</strong><small id="kpi-watchlist-note">加载中</small></article>
+        <article class="card kpi-card"><span class="kpi-label">当前覆盖</span><strong id="kpi-coverage">—</strong><small id="kpi-coverage-note">加载中</small></article>
+        <article class="card kpi-card"><span class="kpi-label">来源条目</span><strong id="kpi-source-count">—</strong><small id="kpi-source-note">加载中</small></article>
+        <article class="card kpi-card"><span class="kpi-label">生成时间</span><strong id="kpi-generated-at">—</strong><small id="kpi-generated-note">静态快照</small></article>
+      </section>
+
+      <section id="overview" class="main-grid">
+        <div class="content-column">
+          <section class="card">
+            <div class="section-header">
+              <div>
+                <p class="section-kicker">全国地图总览</p>
+                <h2>先看哪里证据更完整</h2>
+              </div>
+              <div class="toolbar-inline">
+                <label class="inline-select">省级指标
+                  <select id="map-metric-province">
+                    <option value="overviewScore">综合概览</option>
+                    <option value="incomeSupportScore">收入支撑</option>
+                    <option value="consumptionBurdenScore">消费负担</option>
+                    <option value="publicServiceScore">公共服务</option>
+                    <option value="environmentScore">环境宜居</option>
+                  </select>
+                </label>
+                <label class="inline-select">城市指标
+                  <select id="map-metric-city">
+                    <option value="officialBalanceScore">官方平衡</option>
+                    <option value="balancedScore">综合平衡</option>
+                    <option value="savingScore">攒钱友好</option>
+                    <option value="commuteIndex">通勤便利</option>
+                    <option value="airQualityScore">空气质量</option>
+                  </select>
+                </label>
+                <button id="back-to-province" class="btn btn-secondary" type="button">返回省级</button>
+              </div>
+            </div>
+            <div class="chart-shell">
+              <div id="main-map" class="chart chart-map"></div>
+              <div id="map-state" class="module-state module-state-hidden"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="section-header">
+              <div>
+                <p class="section-kicker">决策入口区</p>
+                <h2>从你的问题出发</h2>
+              </div>
+            </div>
+            <div class="chip-grid">
+              <button class="chip" type="button" data-preset="budget">预算有限</button>
+              <button class="chip" type="button" data-preset="saving">想攒钱</button>
+              <button class="chip" type="button" data-preset="graduates">刚毕业</button>
+              <button class="chip" type="button" data-preset="couples">情侣家庭</button>
+              <button class="chip" type="button" data-preset="environment">更重视环境</button>
+              <button class="chip" type="button" data-preset="opportunity">更看重机会</button>
+            </div>
+            <p id="preset-note" class="helper-text">这些入口只会改变解读权重，不会替代真实数据。</p>
+          </section>
+
+          <section id="compare" class="card compare-layout">
+            <aside class="compare-picker">
+              <div class="section-header compact">
+                <div>
+                  <p class="section-kicker">地区对比工作台</p>
+                  <h2 id="compare-picker-title">选择对象</h2>
+                </div>
+              </div>
+              <div id="compare-picker-list" class="picker-list"></div>
+            </aside>
+            <div class="compare-main">
+              <div class="chart-shell">
+                <div id="compare-chart" class="chart chart-medium"></div>
+                <div id="compare-state" class="module-state module-state-hidden"></div>
+              </div>
+              <div class="detail-grid">
+                <div>
+                  <strong>事实差异</strong>
+                  <div id="compare-facts"></div>
+                </div>
+                <div>
+                  <strong>简洁结论</strong>
+                  <div id="compare-summary"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="side-column">
+          <section class="card">
+            <div class="section-header compact">
+              <div>
+                <p class="section-kicker">当前范围</p>
+                <h2 id="scope-panel-title">加载中</h2>
+              </div>
+            </div>
+            <p id="scope-panel-note" class="helper-text">加载中…</p>
+            <ul id="scope-panel-stats" class="bullet-list"></ul>
+            <strong class="list-title">当前来源摘要</strong>
+            <ul id="scope-panel-sources" class="bullet-list"></ul>
+          </section>
+
+          <section id="interpretation" class="card">
+            <div class="section-header compact">
+              <div>
+                <p class="section-kicker">智能解读</p>
+                <h2>带理由的候选清单</h2>
+              </div>
+            </div>
+            <form id="interpret-form" class="form-grid">
+              <label>范围
+                <select id="interpret-scope" name="scope">
+                  <option value="province">省级</option>
+                  <option value="city" selected>地级市</option>
+                  <option value="county">县区</option>
+                </select>
+              </label>
+              <label>预算
+                <select name="budget">
+                  <option value="tight">紧</option>
+                  <option value="moderate" selected>中</option>
+                  <option value="comfortable">宽松</option>
+                </select>
+              </label>
+              <label>阶段
+                <select name="stage">
+                  <option value="graduate">刚毕业</option>
+                  <option value="earlyCareer" selected>工作 1-3 年</option>
+                  <option value="stable">相对稳定</option>
+                </select>
+              </label>
+              <label>居住形态
+                <select name="household">
+                  <option value="solo" selected>单人</option>
+                  <option value="couple">情侣</option>
+                  <option value="family">小家庭</option>
+                </select>
+              </label>
+              <label>城市偏好
+                <select name="tierPreference">
+                  <option value="balanced" selected>平衡</option>
+                  <option value="big">更看重大城市</option>
+                  <option value="calm">更看重低压力</option>
+                </select>
+              </label>
+              <label>攒钱权重
+                <input type="range" min="0" max="100" name="savingsWeight" value="58" />
+                <span class="range-meta" data-range-output="savingsWeight">58</span>
+              </label>
+              <label>通勤权重
+                <input type="range" min="0" max="100" name="commuteWeight" value="60" />
+                <span class="range-meta" data-range-output="commuteWeight">60</span>
+              </label>
+              <label>空气权重
+                <input type="range" min="0" max="100" name="airWeight" value="52" />
+                <span class="range-meta" data-range-output="airWeight">52</span>
+              </label>
+              <label>机会权重
+                <input type="range" min="0" max="100" name="opportunityWeight" value="50" />
+                <span class="range-meta" data-range-output="opportunityWeight">50</span>
+              </label>
+            </form>
+            <div id="interpret-weight-note" class="rich-text"></div>
+            <div id="interpret-results" class="recommendation-list"></div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="secondary-grid">
+        <section class="card">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">智能提示</p>
+              <h2>当前范围值得先看的方向</h2>
+            </div>
+          </div>
+          <div id="insight-cards" class="insight-grid"></div>
+        </section>
+        <section class="card">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">来源与局限</p>
+              <h2>在首页就把边界说清楚</h2>
+            </div>
+          </div>
+          <ul id="method-preview-list" class="bullet-list"></ul>
+          <strong class="list-title">人群提醒</strong>
+          <ul id="persona-advice" class="bullet-list"></ul>
+        </section>
+      </section>
+
+      <section id="coverage" class="card">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">当前站内覆盖</p>
+            <h2>哪些地方是事实层，哪些还是目录或推理</h2>
+          </div>
+          <a class="btn btn-secondary" href="./about.html">查看完整方法说明</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>省份</th>
+                <th>城市目录</th>
+                <th>城市事实层</th>
+                <th>城市可解读</th>
+                <th>缺失维度</th>
+              </tr>
+            </thead>
+            <tbody id="coverage-preview-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header compact">
+          <div>
+            <p class="section-kicker">数据研究摘要</p>
+            <h2>本页常驻的数据来源说明</h2>
+          </div>
+        </div>
+        <div id="source-preview" class="source-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>全国生活决策地图 · 事实层优先，智能解读只做解释，不替代真实数据。</p>
+      <a href="./about.html">查看完整方法、来源与局限</a>
+    </footer>
+  </div>
+
+  <div id="detail-drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-backdrop"></div>
+    <div class="drawer-panel">
+      <button class="drawer-close" type="button" data-close-drawer aria-label="关闭详情">×</button>
+      <div id="drawer-content"></div>
+    </div>
+  </div>
+</body>
+</html>
